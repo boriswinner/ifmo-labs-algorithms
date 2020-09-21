@@ -50,3 +50,6 @@ def qsort(nums):
 
 def timSort(array):
     array.sort()
+
+def matrixMultiplication(m1, m2):
+    return m1.dot(m2)
