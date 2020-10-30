@@ -1,5 +1,5 @@
 from functions import FUNCTIONS, CONSTRAINTS
-from methods import METHODS
+from methods import METHODS, gauss_method
 import numpy as np
 from scipy import optimize
 import matplotlib.pyplot as plt
@@ -59,6 +59,8 @@ def subtaskTwo():
     res_brute_rational = optimize.brute(DRational, [slice(0, 1, 0.01), slice(0, 1, 0.01)],
                  full_output=True, finish=optimize.fmin)
     print('Brute Linear: {}'.format(res_brute_rational[0]))
+    res_gauss_linear = gauss_method(100, 0, 1, linearFunction)
+    res_gauss_rational = gauss_method(100, 0, 1, rationalFunction())
 
     data_nelder_mead_linear_y = []
     for k in range(101):
@@ -87,11 +89,27 @@ def subtaskTwo():
     print('Loss for Linear approximation - Brute: {}'.format(
         sum(abs(y - x) for x, y in zip(data_y, data_brute_rational_y))))
 
+    data_gauss_linear_y = []
+    for k in range(101):
+        x_k = k / 100
+        data_gauss_linear_y.append(linearFunction(x_k, res_gauss_linear[0][0], res_gauss_linear[0][1]))
+    print('Loss for Linear approximation - gauss: {}'.format(
+        sum(abs(y - x) for x, y in zip(data_y, data_gauss_linear_y))))
+
+    data_gauss_rational_y = []
+    for k in range(101):
+        x_k = k / 100
+        data_gauss_rational_y.append(rationalFunction(x_k, res_gauss_rational[0][0], res_gauss_rational[0][1]))
+    print('Loss for Linear approximation - gauss: {}'.format(
+        sum(abs(y - x) for x, y in zip(data_y, data_gauss_rational_y))))
+
     plt.plot(data_x, data_y, color='blue',  linestyle='--', label='Experimental data')
     plt.plot(data_x, data_nelder_mead_linear_y, color='green', label='Linear approximation - Nelder-Mead')
     plt.plot(data_x, data_nelder_mead_rational_y, color='brown', label='Rational approximation - Nelder-Mead')
     plt.plot(data_x, data_brute_linear_y, color='red', label='Linear approximation - Brute')
     plt.plot(data_x, data_brute_rational_y, color='yellow', label='Rational approximation - Brute')
+    plt.plot(data_x, data_gauss_linear_y, color='green', label='Linear approximation - Gauss method')
+    plt.plot(data_x, data_gauss_rational_y, color='brown', label='Rational approximation - Gauss method')
     plt.legend(loc="upper left")
     plt.show()
 

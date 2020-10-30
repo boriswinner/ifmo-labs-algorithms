@@ -1,5 +1,6 @@
 import numpy as np
 import math
+from scipy import optimize
 EPS = 0.001
 
 def bruteForce(func, x_from=0, x_to=1):
@@ -52,5 +53,26 @@ def goldenSectionSearch(f, x_from, x_to):
             x_from = x1
             y1 = f(x1)
     return [x1, iterations_count, f_executions_count]
+
+def gauss_method(iter_count, a, b, f):
+    current_iter = 0
+    points = [(a, b)]
+    ls = [-1]
+    while True:
+        cur_a, cur_b = points[-1]
+        if len(points) % 2 == 0:
+            l = optimize.golden(lambda l1: f(l1, cur_b), brack=(-1, 1))
+            next_a = l
+            next_b = cur_b
+        else:
+            l = optimize.golden(lambda l1: f(cur_a, l1), brack=(-1, 1))
+            next_a = cur_a
+            next_b = l
+        ls.append(l)
+        points.append((next_a, next_b))
+        current_iter += 1
+        if abs(f(cur_a, cur_b) - f(next_a, next_b)) < EPS or current_iter > iter_count:
+            break
+    return points, ls, current_iter
 
 METHODS = [bruteForce, dichotomyMethod, goldenSectionSearch]
